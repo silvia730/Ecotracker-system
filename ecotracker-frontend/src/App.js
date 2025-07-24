@@ -1,0 +1,57 @@
+import logo from './logo.svg';
+import './App.css';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import Dashboard from './components/Dashboard';
+import UserProfile from './components/UserProfile';
+import Sidebar from './components/Sidebar';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import QuestsPage from './components/QuestsPage';
+import NFTGalleryPage from './components/NFTGalleryPage';
+import ReportLocationPage from './components/ReportLocationPage';
+import BarChartPage from './components/BarChartPage';
+
+function App() {
+  const location = useLocation();
+  const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
+  return (
+    <div className="App">
+      {hideSidebar ? (
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+        </Routes>
+      ) : (
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <Sidebar />
+          <div style={{ flex: 1, background: '#f7fafc', position: 'relative' }}>
+            <button
+              style={{ position: 'absolute', top: 20, right: 30, zIndex: 10, background: '#e53e3e', color: 'white', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
+              onClick={() => {
+                localStorage.clear();
+                window.location.href = '/login';
+              }}
+            >
+              Logout
+            </button>
+            <Routes>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/quests" element={<QuestsPage />} />
+              <Route path="/nft-gallery" element={<NFTGalleryPage />} />
+              <Route path="/report-location" element={<ReportLocationPage />} />
+              <Route path="/bar-chart" element={<BarChartPage />} />
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </div>
+        </div>
+      )}
+      <ToastContainer />
+    </div>
+  );
+}
+
+export default App;
