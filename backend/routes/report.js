@@ -21,10 +21,15 @@ router.post('/report', async (req, res) => {
     if (!locationDoc) return res.status(404).json({ error: 'Location not found.' });
 
     // Save pollution report
-    const report = await PollutionReport.create({ co2Level, location: locationDoc._id, timestamp: new Date() });
+    const report = await PollutionReport.create({ co2Level, location: locationDoc._id, user: userId, timestamp: new Date() });
 
     // Increment user's reportsCount
-    await User.findByIdAndUpdate(userId, { $inc: { reportsCount: 1 } });
+    const updatedUser = await User.findByIdAndUpdate(userId, { $inc: { reportsCount: 1 } }, { new: true });
+    if (updatedUser) {
+      console.log(`User ${userId} reportsCount incremented to:`, updatedUser.reportsCount);
+    } else {
+      console.log(`User ${userId} not found when incrementing reportsCount.`);
+    }
 
     // Calculate cancer risk
     // (Assume industrialProximity is stored in Location or use a mapping as before)
@@ -100,12 +105,10 @@ router.get('/reports/user/:userId', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
-    // Find all reports for this user (by location and user)
-    const reports = await PollutionReport.find().populate('location');
-    // Filter reports by user's location (if you want all reports by this user, you may need to add a user field to PollutionReport)
-    const userReports = reports.filter(r => r.location && r.location.name === user.location);
+    // Find all reports for this user by user field
+    const reports = await PollutionReport.find({ user: user._id }).populate('location');
     // Map to include location name
-    const mapped = userReports.map(r => ({
+    const mapped = reports.map(r => ({
       _id: r._id,
       co2Level: r.co2Level,
       location: r.location._id,
