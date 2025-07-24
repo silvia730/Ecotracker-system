@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/Dashboard';
@@ -26,6 +26,7 @@ function ProtectedRoute({ children }) {
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
   return (
     <div className="App">
@@ -43,7 +44,7 @@ function App() {
               style={{ position: 'absolute', top: 20, right: 30, zIndex: 10, background: '#e53e3e', color: 'white', border: 'none', borderRadius: 6, padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}
               onClick={() => {
                 localStorage.clear();
-                window.location.href = '/login';
+                navigate('/login');
               }}
             >
               Logout
