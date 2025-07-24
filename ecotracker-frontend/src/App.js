@@ -13,6 +13,17 @@ import NFTGalleryPage from './components/NFTGalleryPage';
 import ReportLocationPage from './components/ReportLocationPage';
 import BarChartPage from './components/BarChartPage';
 
+function isAuthenticated() {
+  return !!localStorage.getItem('ecotrackerToken');
+}
+
+function ProtectedRoute({ children }) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
 function App() {
   const location = useLocation();
   const hideSidebar = location.pathname === '/login' || location.pathname === '/register';
@@ -38,12 +49,12 @@ function App() {
               Logout
             </button>
             <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route path="/quests" element={<QuestsPage />} />
-              <Route path="/nft-gallery" element={<NFTGalleryPage />} />
-              <Route path="/report-location" element={<ReportLocationPage />} />
-              <Route path="/bar-chart" element={<BarChartPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+              <Route path="/quests" element={<ProtectedRoute><QuestsPage /></ProtectedRoute>} />
+              <Route path="/nft-gallery" element={<ProtectedRoute><NFTGalleryPage /></ProtectedRoute>} />
+              <Route path="/report-location" element={<ProtectedRoute><ReportLocationPage /></ProtectedRoute>} />
+              <Route path="/bar-chart" element={<ProtectedRoute><BarChartPage /></ProtectedRoute>} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </div>
