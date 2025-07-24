@@ -1,6 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-const User = require('./models/user'); // all lowercase
+const User = require('./models/User'); // all lowercase -> capital U
 
 const userId = '687e3cd297716956c7c28dd0';
 
